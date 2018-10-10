@@ -1,0 +1,41 @@
+#!/bin/bash
+usage()
+{
+    echo -e "Usage:
+    $0 [start|stop|status|restart]
+    \033[0GConfig file is /etc/SSR.json."
+}
+
+start()
+{
+    echo -n "Starting shadowsocksR:"
+    $command -d start &>/dev/null
+    ps -ef|grep -v grep|grep -q "$command" && \
+    echo -e "\033[60G[\033[32m  OK  \033[0m]" || \
+    echo -e "\033[60G[\033[31mFAILED\033[0m]"
+}
+
+stop()
+{
+    echo -n "Stopping shadowsocksR:"
+    $command -d stop &>/dev/null
+    ps -ef|grep -v grep|grep -q "$command" && \
+    echo -e "\033[60G[\033[31mFAILEF\033[0m]" || \
+    echo -e "\033[60G[\033[32m  OK  \033[0m]"
+}
+
+status()
+{
+    ps -ef 2>&-|grep -v grep|grep -q "$command" && \
+    echo "ShadowsocksR is running..." || \
+    echo "ShadowsocksR is stopped..."
+}
+
+restart()
+{
+    stop
+    start
+}
+
+command="/usr/local/SSR/shadowsocks/server.py -c /etc/SSR.json --pid-file /usr/local/SSR/shadowsocks/SSR.pid"
+${1:-usage} 2>/dev/null || usage
