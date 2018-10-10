@@ -1,7 +1,6 @@
 #!/bin/bash
 Exit()
 {
-	clear
 	echo -e "$1"
 	exit $2
 }
@@ -64,12 +63,12 @@ Change_pwd()
 #Install shadowsocksR files to '$SSR_path'.
 Install_file()
 {
-	if [ -d SSR ]
+	if [ -d SSR_install ]
 	then
-		mv SSR $SSR_path
-	elif [ -d SSR-master ]
+		mv SSR_install $SSR_path
+	elif [ -d SSR_install-master ]
 	then
-		mv SSR-master $SSR_path
+		mv SSR_install-master $SSR_path
 	else
 		$PM -y install git
 		git clone https://github.com/mmmdbybyd/SSR_install.git $SSR_path
@@ -80,7 +79,7 @@ Install_file()
 	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
 	then
 		curl -k -o libsodium.zip https://codeload.github.com/jedisct1/libsodium/zip/master || \
-		Exit "shadowsocksR files download failed." 1
+		Exit "libsodium files download failed." 1
 		$PM -y install gcc make unzip autoconf automake libtool
 		unzip -q libsodium.zip
 		cd libsodium-master
