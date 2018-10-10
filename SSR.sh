@@ -1,0 +1,148 @@
+#!/bin/bash
+Exit()
+{
+	clear
+	echo -e "$1"
+	exit $2
+}
+
+#Make SSR.json
+Config()
+{
+	clear
+	echo -n "Please input shadowsocksR encryption method(default rc4-md5): "
+	read encryption_method
+	while [ "$conf_done" != y -a "$conf_done" != Y ]
+	do
+		while true
+		do
+			echo -n "Please input shadowsocksR server port: "
+			read server_port
+			[ "$server_port" -gt "0" -a "$server_port" -lt "65536" ] && break
+			echo "Please input 1-65535"
+		done
+		echo -n "Please input shadowsocksR password(default 123456): "
+		read password
+		port_password+="\"$server_port\":\"${password:-123456}\", "
+		echo -n "Already input all ports and passwords?[y/n]: "
+		read conf_done
+	done
+	cat >/etc/SSR.json <<-conf
+	{
+	"server":"0.0.0.0",
+	"port_password":{${port_password%,*}},
+	"method":"${encryption_method:=rc4-md5}",
+	"protocol": "auth_aes128_md5",
+	"obfs": "http_simple"
+	}
+	conf
+	chmod 777 /etc/SSR.json
+}
+
+#Change the working directory to script directory the parent directory.
+Change_pwd()
+{
+	if [ -z "$(echo $0|grep /)" ]
+	then
+		if [ -f "$0" ]
+		then
+			 script_dir="$PWD"
+		else
+			script_dir=`type "${0##*/}"`
+			script_dir="${script_dir%/*}"
+			script_dir="/${script_dir#*/}"
+		fi
+	else
+		script_dir="${0%/*}"
+		echo "$script_dir"|grep -Eq "\.\.?$"&&script_dir=
+		script_dir="${PWD}/${script_dir##*/}"
+	fi
+	cd "$script_dir"
+	cd ..
+}
+
+#Install shadowsocksR files to '$SSR_path'.
+Install_file()
+{
+	if [ -d SSR ]
+	then
+		mv SSR $SSR_path
+	elif [ -d SSR-master ]
+	then
+		mv SSR-master $SSR_path
+	else
+		$PM -y install git
+		git clone https://github.com/mmmdbybyd/SSR_install.git $SSR_path
+	fi
+	[ ! -d $SSR_path ] && Exit "shadowsocksR files download failed." 1
+	chmod -R 0777 $SSR_path
+	mv $SSR_path/init.d/SSR /etc/init.d/SSR
+	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
+	then
+		curl -k -o libsodium.zip https://codeload.github.com/jedisct1/libsodium/zip/master || \
+		Exit "shadowsocksR files download failed." 1
+		$PM -y install gcc make unzip autoconf automake libtool
+		unzip -q libsodium.zip
+		cd libsodium-master
+		./autogen.sh && \
+		./configure --prefix=/usr/local && \
+		make -j 2 && \
+		make install || \
+		Exit "libsodium compile failed." 1
+		cd .. ; rm -rf libsodium* 
+		echo "/usr/local/lib" >>/etc/ld.so.conf
+		ldconfig
+	fi
+}
+
+#Stop shadowsocksR and delete shadowsocksR files.
+Delete()
+{
+	/etc/init.d/SSR stop &>/dev/null
+	rm -rf /etc/init.d/SSR $SSR_path
+}
+
+Init()
+{
+	SSR_path="/usr/local/SSR" #Set shadowsocksR install path.
+	[ "$1" == "uninstall" ] && return
+	type apt-get &>/dev/null && PM=apt-get || \
+	type yum &>/dev/null && PM=yum || \
+	Exit "Not support OS." 1
+	echo -n "make a update?[y/n]: "
+	read update
+	[ "$update" == "y" -o "$update" == "Y" ] && $PM -y update
+	$PM -y install python\*
+}
+
+Install()
+{
+	Config 2>&-
+	Init
+	Delete
+	Change_pwd
+	Install_file
+	Service_file 2>/dev/null
+	/etc/init.d/SSR start|grep -q OK && Exit \
+	"\033[44;37mShadowsocksR install success.\033[0;34m
+	port_password:\033[25G${port_password%, }
+	method:\033[25G${encryption_method:-rc4-md5}
+	protocol:\033[25Gauth_aes128_md5
+	obfs:\033[25Ghttp_simple
+	\033[0G`/etc/init.d/SSR usage`\n\033[0m"
+	Delete
+	Exit "\033[41;37mShadowsocksR install failed.\033[0m" 1
+}
+
+Uninstall()
+{
+	echo -e "Uninstall shadowsocksR? [y/n]:\c"
+	read answer
+	[ "$answer" == "n" -o "$answer" == "N" ] && Exit "Quit uninstall."
+	Init uninstall #Get shadowsocksR install path
+	Delete
+	Exit "\033[44;37mShadowsocksR uninstall success.\033[0m"
+}
+
+echo $*|grep -qi uninstall && Uninstall
+Install
