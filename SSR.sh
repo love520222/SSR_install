@@ -82,9 +82,9 @@ Install_file()
 	mv $SSR_path/init.d/SSR /etc/init.d/SSR
 	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
 	then
+		$PM -y install curl gcc make unzip autoconf automake libtool
 		curl -k -o libsodium.zip https://codeload.github.com/jedisct1/libsodium/zip/master || \
 		Exit "libsodium files download failed." 1
-		$PM -y install gcc make unzip autoconf automake libtool
 		unzip -q libsodium.zip
 		cd libsodium-master
 		./autogen.sh && \
