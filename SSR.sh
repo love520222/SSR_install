@@ -109,9 +109,8 @@ Init()
 {
 	SSR_path="/usr/local/SSR" #Set shadowsocksR install path.
 	[ "$1" == "uninstall" ] && return
-	type apt-get &>/dev/null && PM=apt-get || \
-	type yum &>/dev/null && PM=yum || \
-	Exit "Not support OS." 1
+	PM=`which apt-get || which yum`
+	[ -z $PM ] && Exit "Not support OS." 1
 	echo -n "make a update?[y/n]: "
 	read update
 	[ "$update" == "y" -o "$update" == "Y" ] && $PM -y update
