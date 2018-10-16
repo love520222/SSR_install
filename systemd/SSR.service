@@ -1,0 +1,10 @@
+[Unit]
+Description=SSR - ShadowsocksR
+Documentation=https://github.com/breakwa11/shadowsocks-rss/wiki
+ 
+[Service]
+Type=forking
+ExecStart=/etc/init.d/SSR start
+ExecReload=/etc/init.d/SSR restart
+ExecStop=/etc/init.d/SSR stop
+PrivateTmp=true
