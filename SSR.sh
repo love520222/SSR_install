@@ -83,7 +83,8 @@ Install_file()
 	#add systemd service
 	if which systemctl
 	then
-		cp -f $SSR_path/systemd/SSR.service /etc/systemd/system/
+		mkdir -p /usr/lib/systemd/system
+		cp -f $SSR_path/systemd/SSR.service /usr/lib/systemd/system
 		systemctl daemon-reload
 	fi
 	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
