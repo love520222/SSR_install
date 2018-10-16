@@ -79,7 +79,13 @@ Install_file()
 	fi
 	[ ! -d $SSR_path ] && Exit "shadowsocksR files download failed." 1
 	chmod -R 0777 $SSR_path
-	mv $SSR_path/init.d/SSR /etc/init.d/SSR
+	cp -f $SSR_path/init.d/SSR /etc/init.d/SSR
+	#add systemd service
+	if which systemctl
+	then
+		cp -f $SSR_path/systemd/SSR.service /etc/systemd/system/
+		systemctl daemon-reload
+	fi
 	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
 	then
 		$PM -y install curl gcc make unzip autoconf automake libtool
@@ -102,7 +108,7 @@ Install_file()
 Delete()
 {
 	/etc/init.d/SSR stop &>/dev/null
-	rm -rf /etc/init.d/SSR $SSR_path
+	rm -rf /etc/init.d/SSR /etc/systemd/system/SSR.service $SSR_path
 }
 
 Init()
