@@ -1,9 +1,11 @@
 #!/bin/bash
 usage()
 {
+    [ -f /usr/lib/systemd/system/SSR.service ] && us="systemctl [start|stop|status|restart] SSR.service" || us="$0 [start|stop|status|restart]"
     echo -e "Usage:
-    $0 [start|stop|status|restart]
+    $us
     \033[0GConfig file is /etc/SSR.json."
+
 }
 
 start()
