@@ -83,7 +83,7 @@ Install_file()
 	#add systemd service
 	if which systemctl
 	then
-		mkdir -p /usr/lib/systemd/system
+		mkdir -p /etc/systemd/system
 		cp -f $SSR_path/systemd/SSR.service /usr/lib/systemd/system
 		systemctl daemon-reload
 	fi
