@@ -11,7 +11,7 @@ Config()
 	clear
 	echo -n "Please input shadowsocksR encryption method(default rc4-md5): "
 	read encryption_method
-	echo -n "Please input shadowsocksR protocol(default auth_aes128_md5): "
+	echo -n "Please input shadowsocksR protocol(default auth_sha1_v4): "
 	read protocol
 	echo -n "Please input shadowsocksR obfs(default http_simple): "
 	read obfs
@@ -35,7 +35,7 @@ Config()
 	"server":"0.0.0.0",
 	"port_password":{${port_password%,*}},
 	"method":"${encryption_method:=rc4-md5}",
-	"protocol": "${protocol:=auth_aes128_md5}",
+	"protocol": "${protocol:=auth_sha1_v4}",
 	"obfs": "${obfs:=http_simple}"
 	}
 	conf
@@ -136,7 +136,7 @@ Install()
 	"\033[44;37mShadowsocksR install success.\033[0;34m
 	port_password:\033[25G${port_password%, }
 	method:\033[25G${encryption_method:=rc4-md5}
-	protocol:\033[25G${protocol:=auth_aes128_md5}
+	protocol:\033[25G${protocol:=auth_sha1_v4}
 	obfs:\033[25G${obfs:=http_simple}
 	\033[0G`/etc/init.d/SSR usage`\n\033[0m"
 	Delete
