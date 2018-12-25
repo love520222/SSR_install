@@ -32,11 +32,12 @@ Config()
 	done
 	cat >/etc/SSR.json <<-conf
 	{
-	"server":"0.0.0.0",
-	"port_password":{${port_password%,*}},
-	"method":"${encryption_method:=rc4-md5}",
+	"server": "0.0.0.0",
+	"port_password": {${port_password%,*}},
+	"method": "${encryption_method:=rc4-md5}",
 	"protocol": "${protocol:=auth_sha1_v4}",
-	"obfs": "${obfs:=http_simple}"
+	"obfs": "${obfs:=http_simple}",
+	"timeout": 120
 	}
 	conf
 	chmod 777 /etc/SSR.json
