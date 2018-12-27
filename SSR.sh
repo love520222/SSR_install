@@ -110,6 +110,7 @@ Install_file()
 Delete()
 {
 	/etc/init.d/SSR stop &>/dev/null
+	systemctl disable SSR.service
 	rm -rf /etc/init.d/SSR /usr/lib/systemd/system/SSR.service $SSR_path
 }
 
