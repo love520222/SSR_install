@@ -1,7 +1,7 @@
 #!/bin/bash
 usage()
 {
-    [ -f /usr/lib/systemd/system/SSR.service ] && us="systemctl [start|stop|status|restart] SSR.service" || us="$0 [start|stop|status|restart]"
+    [ -n "$(which systemctl 2>/dev/null)" ] && us="systemctl [start|stop|status|restart] SSR.service" || us="$0 [start|stop|status|restart]"
     echo -e "Usage:
     $us
     \033[0GConfig file is /etc/SSR.json."
@@ -12,6 +12,7 @@ start()
 {
     echo -n "Starting shadowsocksR:"
     $command -d start &>/dev/null
+    sleep 0.3
     ps -ef|grep -v grep|grep -q "$command" && \
     echo -e "\033[60G[\033[32m  OK  \033[0m]" || \
     echo -e "\033[60G[\033[31mFAILED\033[0m]"
@@ -21,6 +22,7 @@ stop()
 {
     echo -n "Stopping shadowsocksR:"
     $command -d stop &>/dev/null
+    sleep 0.3
     ps -ef|grep -v grep|grep -q "$command" && \
     echo -e "\033[60G[\033[31mFAILEF\033[0m]" || \
     echo -e "\033[60G[\033[32m  OK  \033[0m]"
