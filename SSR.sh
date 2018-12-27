@@ -87,6 +87,7 @@ Install_file()
 		mkdir -p /etc/systemd/system
 		cp -f $SSR_path/systemd/SSR.service /usr/lib/systemd/system
 		systemctl daemon-reload
+		systemctl start SSR.service
 	fi
 	if [ ! -f /usr/local/lib/libsodium.a ] && echo "$encryption_method"|grep -Eq "chacha20|salsa20"
 	then
