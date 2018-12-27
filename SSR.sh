@@ -110,7 +110,7 @@ Install_file()
 Delete()
 {
 	/etc/init.d/SSR stop &>/dev/null
-	rm -rf /etc/init.d/SSR /etc/systemd/system/SSR.service $SSR_path
+	rm -rf /etc/init.d/SSR /usr/lib/systemd/system/SSR.service $SSR_path
 }
 
 Init()
