@@ -15,7 +15,7 @@ Config()
 	read protocol
 	echo -n "Please input shadowsocksR obfs(default http_simple): "
 	read obfs
-	while [ "$conf_done" == 'n' -a "$conf_done" == 'N' ]
+	while [ "$conf_done" == 'n' -o "$conf_done" == 'N' ]
 	do
 		while true
 		do
