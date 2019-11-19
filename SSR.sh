@@ -134,7 +134,6 @@ Install()
 	Delete
 	Change_pwd
 	Install_file
-	Service_file 2>/dev/null
 	/etc/init.d/SSR start|grep -q OK && Exit \
 	"\033[44;37mShadowsocksR install success.\033[0;34m
 	port_password:\033[25G${port_password%, }
